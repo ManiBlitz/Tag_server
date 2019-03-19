@@ -18,7 +18,7 @@ class Game(models.Model):
     type_game = models.IntegerField(default=1)
     game_name = models.CharField(max_length=200)
     duration = models.IntegerField(default=300)
-    game_status = models.IntegerField(default=1)
+    game_status = models.IntegerField(default=1001)
     private = models.BooleanField(default=False)
     longitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
     latitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
