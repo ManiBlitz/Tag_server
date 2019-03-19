@@ -71,7 +71,7 @@ def game_info(request, format=None):
             game_id = request.GET['game_id']
             game = Game.objects.get(pk=game_id)
             serializer = GameSerializer(game, many=False)
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             return Response({
                 'game_found': False
@@ -85,7 +85,7 @@ def get_invites(request, format=None):
         try:
             invites = Invite.objects.get(receiver = request.session['user_logged'])
             serializer = InviteSerializer(invites, many=True)
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             pprint.pprint(e)
             return Response({
@@ -105,7 +105,7 @@ def teams(request, format=None):
             lobby_id = request.GET['lobby_id']
             teams = Teams.objects.get(lobby=Game.objects.get(pk=lobby_id))
             serializer = TeamsSerializer(teams, many=True)
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             return Response({
                 'teams_found': False
@@ -122,7 +122,7 @@ def get_game_tags_player(request, format=None):
             game = Game.objects.get(pk=game_id)
             tags = Tag.objects.filter(game = game).filter(sender_id=player_id)
             serializer = TagSerializer(tags,many=True)
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -136,7 +136,7 @@ def get_games_list(request, format=None):
             longitude = request.GET['longitude']
             games = Game.objects.filter(latitude__range=(latitude-0.1,latitude+0.1)).filter(longitude__range=(longitude-0.1,longitude+0.1))
             serializer = GameSerializer(games,many=True)
-            return Response(serializer)
+            return Response(serializer.data)
         except Exception as e:
             pprint.pprint(e)
             return Response(
@@ -151,7 +151,7 @@ def get_games_list(request, format=None):
 
 
 @api_view(['GET'])
-def start_game(request, format = None):
+def start_game(request, format=None):
 
     if request.GET:
         try:
@@ -159,14 +159,14 @@ def start_game(request, format = None):
             game_to_play = Game.objects.get(pk=game_id)
             lobby = Lobby.objects.filters(game=game_to_play).filter(kicked=False).filter(in_game=True)
             if len(lobby) >= 2:
-                game_to_play.game_status = 2
+                game_to_play.game_status = 1002
                 game_to_play.save()
                 serializer = LobbySerializer(lobby, many=True)
-                return Response(serializer, status=status.HTTP_200_OK)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             else:
                 return Response({
                     'error_message': "You need to have more than 2 players ready to start the game!"
-                }, status = status.HTTP_204_NO_CONTENT)
+                }, status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             pprint.pprint(e)
             return Response({
@@ -406,7 +406,7 @@ def create_game(request, format=None):
 
     if request.POST:
         try:
-            game_admin = Players.objects.get(request.POST['player_id'])
+            game_admin = Players.objects.get(pk=request.POST['player_id'])
 
             new_game = Game()
             new_lobby = Lobby()     # Each new game will create a new lobby linked to it
@@ -415,7 +415,13 @@ def create_game(request, format=None):
             new_game.type_game = request.POST.get("type_game")
             new_game.duration = request.POST.get("game_duration")
             new_game.game_status = request.POST.get("game_status")
-            new_game.private = request.POST.get("private")
+
+            new_game.private = True
+            if request.POST.get("private") == "false":
+                new_game.private = False
+
+            new_game.longitude = request.POST.get("longitude")
+            new_game.latitude = request.POST.get("latitude")
             new_game.save()
 
             new_lobby.game = Game.objects.get(pk=new_game.pk)
@@ -425,21 +431,11 @@ def create_game(request, format=None):
             new_lobby.admin = True
             new_lobby.save()
 
-            game_dict = {
-                'game_created': True,
-                'game': {
-                    "id": new_game.id,
-                    'name': new_game.game_name,
-                    'type_game': new_game.type_game,
-                    'duration': new_game.duration,
-                    'status': new_game.game_status,
-                    'private':new_game.private,
-                }
-            }
+            serializer = GameSerializer(new_game, many=False)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-            return Response(game_dict, status=status.HTTP_201_CREATED)
         except Exception as e:
-            pprint.pprint(e)
+            pprint.pprint(e.with_traceback())
             return Response({
                 'game_created': False,
                 'error_message': "Unexpected Error Occured!"

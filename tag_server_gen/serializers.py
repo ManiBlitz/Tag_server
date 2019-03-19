@@ -11,13 +11,13 @@ class PlayersSerializer(serializers.ModelSerializer):
 class GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Game
-        fields = ('id','type_game','duration','game_status')
+        fields = ('id','type_game','duration','game_status','private','longitude','latitude','game_name')
 
 
 class LobbySerializer(serializers.ModelSerializer):
     class Meta:
         model = Lobby
-        fields = ('id','player','in_game','admin','admin','creation_time')
+        fields = ('id','player','in_game','game','admin','creation_time','kicked','time_kicked')
 
 
 class TeamsSerializer(serializers.ModelSerializer):
