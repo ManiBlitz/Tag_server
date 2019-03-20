@@ -53,14 +53,30 @@ def lobby_info(request, format=None):
     if request.method == "GET":
         try:
             game_id = request.GET['game_id']
-            lobby = Lobby.objects.get(game=Game.objects.get(id=game_id))
-            serializer = LobbySerializer(lobby, many="true")
+            lobby = Lobby.objects.filter(game=Game.objects.get(id=game_id))
+            serializer = LobbySerializer(lobby, many=True)
             return Response(serializer.data)
         except Exception as e:
             pprint.pprint(e)
             return Response({
                 'lobby_found':False
             }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['GET'])
+def lobby_row_info(request, format=None):
+
+    if request.method == "GET":
+        try:
+            lobby_id = request.GET['lobby_id']
+            lobby = Lobby.objects.get(pk=lobby_id)
+            serializer = LobbySerializer(lobby, many=False)
+            return Response(serializer.data)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response({
+                'lobby_found': False
+            }, status=status.HTTP_404_NOT_FOUND)
+
 
 
 @api_view(['GET'])
@@ -157,7 +173,7 @@ def start_game(request, format=None):
         try:
             game_id = request.GET['game_id']
             game_to_play = Game.objects.get(pk=game_id)
-            lobby = Lobby.objects.filters(game=game_to_play).filter(kicked=False).filter(in_game=True)
+            lobby = Lobby.objects.filter(game=game_to_play).filter(kicked=False).filter(in_game=True)
             if len(lobby) >= 2:
                 game_to_play.game_status = 1002
                 game_to_play.save()
@@ -281,10 +297,10 @@ def add_to_lobby(request, format=None):
         game_id = request.POST['game_id']
         game = Game.objects.get(pk = game_id)
         lobby = Lobby.objects.get(game=game)
-        invite = Invite.object.get(lobby=lobby)
+        invite = Invite.objects.filter(lobby=lobby).filter(receiver=player_id)
         if game.private:
 
-            if invite.receiver == player_id:
+            if invite is not None and invite.receiver == player_id:
                 new_lobby_in = Lobby()
                 new_lobby_in.player = Players.objects.get(pk=player_id)
                 new_lobby_in.game = game
@@ -329,8 +345,7 @@ def kick_from_lobby(request, format=None):
     if request.POST:
         try:
             lobby_id = request.POST['lobby_id']
-            player_id = request.POST['player_id']
-            player_to_kick = Lobby.objects.filter(pk=lobby_id).filter(player=Players.objects.get(pk=player_id))
+            player_to_kick = Lobby.objects.get(pk=lobby_id)
             player_to_kick.kicked = True
             player_to_kick.time_kicked = datetime.now()
             player_to_kick.save()
