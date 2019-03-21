@@ -25,7 +25,7 @@ urlpatterns = [
     path('player_logout', views.player_logout),         #INSERTED
     path('join_lobby', views.add_to_lobby),             #INSERTED
     path('kick_player',views.kick_from_lobby),          #INSERTED
-    path('player_ready', views.player_ready)
+    path('player_ready', views.player_ready)            #INSERTED
 
 
 ]

@@ -177,8 +177,7 @@ def start_game(request, format=None):
             if len(lobby) >= 2:
                 game_to_play.game_status = 1002
                 game_to_play.save()
-                serializer = LobbySerializer(lobby, many=True)
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(status=status.HTTP_200_OK)
             else:
                 return Response({
                     'error_message': "You need to have more than 2 players ready to start the game!"
