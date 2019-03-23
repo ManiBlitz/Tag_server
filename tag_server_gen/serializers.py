@@ -34,4 +34,4 @@ class TagSerializer(serializers.ModelSerializer):
 
 class InviteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ('id','sender','receiver','time_sent','opened','lobby')
+        model = ('id','sender','receiver','time_sent','opened','time_opened','game')

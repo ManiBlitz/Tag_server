@@ -93,13 +93,27 @@ def game_info(request, format=None):
                 'game_found': False
             }, status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['GET'])
+def invite_info(request, format=None):
+
+    if request.method == "GET":
+        try:
+            invite_id = request.GET['invite_id']
+            invite = Invite.objects.get(pk=invite_id)
+            serializer = InviteSerializer(invite, many=False)
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({
+                'game_found': False
+            }, status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET'])
 def get_invites(request, format=None):
 
-    if request.method == "GET" and 'user_logged' in request.session:
+    if request.method == "GET":
         try:
-            invites = Invite.objects.get(receiver = request.session['user_logged'])
+            invites = Invite.objects.filter(receiver=request.GET["receiver"])
             serializer = InviteSerializer(invites, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -245,18 +259,15 @@ def send_invite(request, format=None):
 
     if request.POST:
         try:
-            if 'user_logged' in request.session:
-                receiver_name = request.POST['receiver_name']
-                lobby_id = request.POST['lobby_id']
-                player = Players.objects.get(pseudoname=receiver_name)
-                invitation = Invite()
-                invitation.lobby = Lobby.objects.get(pk=lobby_id)
-                invitation.sender = request.session['user_logged']
-                sender = Players.objects.get(pk=invitation.sender)
-                invitation.receiver = player.id
-                invitation.save()
-            else:
-                raise Exception("Unauthorized action! User must be logged in to send invite")
+            receiver_name = request.POST['receiver_name']
+            game_id = request.POST['game_id']
+            player = Players.objects.get(pseudoname=receiver_name)
+            invitation = Invite()
+            invitation.game = Game.objects.get(pk=game_id)
+            invitation.sender = request.POST["sender_id"]
+            sender = Players.objects.get(pk=invitation.sender)
+            invitation.receiver = player.id
+            invitation.save()
 
             # Now we send an email to the user to confirm his email
 
