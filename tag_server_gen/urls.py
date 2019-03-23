@@ -10,7 +10,7 @@ urlpatterns = [
     path('lobby_info', views.lobby_info),               #INSERTED
     path('lobby_row_info', views.lobby_row_info),       #INSERTED
     path('game_info', views.game_info),                 #INSERTED
-    path('invite_info', views.invite_info),
+    path('invite_info', views.invite_info),             #INSERTED
     path('tags', views.get_game_tags_player),
     path('invites', views.get_invites),
     path('teams', views.teams),
@@ -19,8 +19,8 @@ urlpatterns = [
 
 
     # Post functions URLs
-    path('get_invites', views.get_invites),
-    path('send_invite', views.send_invite),
+    path('send_invite', views.send_invite),             #INSERTED
+    path('open_invite', views.open_invite),             #INSERTED
     path('player_register', views.register_player),     #INSERTED
     path('create_game', views.create_game),             #INSERTED
     path('player_login', views.player_login),           #INSERTED

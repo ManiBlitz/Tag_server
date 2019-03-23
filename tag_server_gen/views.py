@@ -99,12 +99,13 @@ def invite_info(request, format=None):
     if request.method == "GET":
         try:
             invite_id = request.GET['invite_id']
-            invite = Invite.objects.get(pk=invite_id)
+            invite = Invite.objects.get(id=invite_id)
             serializer = InviteSerializer(invite, many=False)
             return Response(serializer.data)
         except Exception as e:
+            pprint.pprint(e)
             return Response({
-                'game_found': False
+                'Invite_found': False
             }, status=status.HTTP_204_NO_CONTENT)
 
 
@@ -113,7 +114,7 @@ def get_invites(request, format=None):
 
     if request.method == "GET":
         try:
-            invites = Invite.objects.filter(receiver=request.GET["receiver"])
+            invites = Invite.objects.filter(receiver=request.GET["receiver_id"])
             serializer = InviteSerializer(invites, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -298,6 +299,24 @@ def send_invite(request, format=None):
             }, status=status.HTTP_400_BAD_REQUEST
         )
 
+
+@csrf_exempt
+@api_view(['POST'])
+def open_invite(request,format=None):
+
+    if request.POST:
+        try:
+            invite_id = request.POST["invite_id"]
+            invitation = Invite.objects.get(pk=invite_id)
+            invitation.opened = True
+            invitation.time_opened = datetime.now()
+            invitation.save()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 @csrf_exempt
 @api_view(['POST'])
 def add_to_lobby(request, format=None):
@@ -306,8 +325,7 @@ def add_to_lobby(request, format=None):
         player_id = request.POST['player_id']
         game_id = request.POST['game_id']
         game = Game.objects.get(pk = game_id)
-        lobby = Lobby.objects.get(game=game)
-        invite = Invite.objects.filter(lobby=lobby).filter(receiver=player_id)
+        invite = Invite.objects.filter(game=game).filter(receiver=player_id)
         if game.private:
 
             if invite is not None and invite.receiver == player_id:
