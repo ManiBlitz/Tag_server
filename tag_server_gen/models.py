@@ -47,11 +47,13 @@ class Tag(models.Model):
 
 
 class Invite(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
     sender = models.IntegerField()
     receiver = models.IntegerField()
-    time_sent = models.DateField(auto_now_add=True)
+    time_sent = models.DateTimeField(auto_now_add=True)
     opened = models.BooleanField(default=False)
-    lobby = models.ForeignKey(Lobby, on_delete=models.CASCADE)
+    time_opened = models.DateTimeField(null=True)
+
 
 
 
