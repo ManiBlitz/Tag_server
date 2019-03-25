@@ -165,8 +165,8 @@ def get_games_list(request, format=None):
         try:
             latitude = request.GET['latitude']
             longitude = request.GET['longitude']
-            games = Game.objects.filter(latitude__range=(latitude-0.1,latitude+0.1)).filter(longitude__range=(longitude-0.1,longitude+0.1))
-            serializer = GameSerializer(games,many=True)
+            games = Game.objects.filter(latitude__range=(float(latitude)-0.1, float(latitude)+0.1)).filter(longitude__range=(float(longitude)-0.1, float(longitude)+0.1))
+            serializer = GameSerializer(games, many=True)
             return Response(serializer.data)
         except Exception as e:
             pprint.pprint(e)

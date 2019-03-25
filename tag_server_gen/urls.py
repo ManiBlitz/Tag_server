@@ -12,9 +12,9 @@ urlpatterns = [
     path('game_info', views.game_info),                 #INSERTED
     path('invite_info', views.invite_info),             #INSERTED
     path('tags', views.get_game_tags_player),
-    path('invites', views.get_invites),
+    path('invites', views.get_invites),                 #INSERTED
     path('teams', views.teams),
-    path('games_list', views.get_games_list),
+    path('games_list', views.get_games_list),           #INSERTED
     path('start_game', views.start_game),               #INSERTED
 
 
