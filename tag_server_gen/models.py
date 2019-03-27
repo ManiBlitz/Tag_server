@@ -32,12 +32,7 @@ class Lobby(models.Model):
     creation_time = models.DateTimeField(auto_now_add=True)
     kicked = models.BooleanField(default=False)
     time_kicked = models.DateTimeField(null=True)
-
-
-class Teams(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    player = models.ForeignKey(Players, on_delete=models.CASCADE)
-    team_id = models.CharField(max_length=200)  # This attribute is used to know the team
+    team = models.IntegerField(default=0)
 
 
 class Tag(models.Model):

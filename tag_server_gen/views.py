@@ -129,21 +129,6 @@ def get_invites(request, format=None):
 
 
 @api_view(['GET'])
-def teams(request, format=None):
-
-    if request.method == "GET":
-        try:
-            lobby_id = request.GET['lobby_id']
-            teams = Teams.objects.get(lobby=Game.objects.get(pk=lobby_id))
-            serializer = TeamsSerializer(teams, many=True)
-            return Response(serializer.data)
-        except Exception as e:
-            return Response({
-                'teams_found': False
-            }, status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['GET'])
 def get_game_tags_player(request, format=None):
 
     if request.method == "GET":
@@ -332,6 +317,20 @@ def add_to_lobby(request, format=None):
                 new_lobby_in = Lobby()
                 new_lobby_in.player = Players.objects.get(pk=player_id)
                 new_lobby_in.game = game
+                if game.type_game != 1:
+
+                    # We first check the last individual in the lobby
+                    # If there is none or the previous is two, the team id is 1
+                    # else it is 2
+
+                    new_lobby_in.team = 1
+                    try:
+                        last_in_lobby = Lobby.objects.filter(game=game).latest('pk')
+                        if last_in_lobby.team == 1:
+                            new_lobby_in.team = 2;
+                    except Exception as e:
+                        pass
+
                 new_lobby_in.in_game = False
                 new_lobby_in.admin = False
                 new_lobby_in.save()
