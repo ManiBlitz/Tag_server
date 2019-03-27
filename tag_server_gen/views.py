@@ -201,7 +201,7 @@ def player_login(request, format=None):
     if request.POST:
         try:
             player = Players.objects.get(email=request.POST.get('email'))
-            if player.password == request.POST.get('password'):
+            if decrypt(password_encrypt, player.password).decode("utf8") == request.POST.get('password'):
                 request.session['user_logged'] = player.id
                 request.session['user_pseudo'] = player.pseudoname
                 request.session.set_expiry(7200)
@@ -395,7 +395,7 @@ def register_player(request, format=None):
         player.name = request.POST.get('name')
         player.pseudoname = request.POST.get('pseudoname')
         player.email = request.POST.get('email')
-        player.password = encrypt(password_encrypt, request.POST.get("password").encode('utf8'))
+        player.password = encrypt(password_encrypt, request.POST.get("password"))
         player.phone_number = request.POST.get("phone_number")
         player.date_creation = timezone.now()
         player.birthday = request.POST.get("birthday")
