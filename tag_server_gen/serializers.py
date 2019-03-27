@@ -20,12 +20,6 @@ class LobbySerializer(serializers.ModelSerializer):
         fields = ('id','player','in_game','game','admin','creation_time','kicked','time_kicked')
 
 
-class TeamsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Teams
-        fields = ('id','game','team_id')
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
