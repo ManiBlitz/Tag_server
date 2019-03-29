@@ -17,7 +17,7 @@ class GameSerializer(serializers.ModelSerializer):
 class LobbySerializer(serializers.ModelSerializer):
     class Meta:
         model = Lobby
-        fields = ('id','player','in_game','game','admin','creation_time','kicked','time_kicked')
+        fields = ('id','player','in_game','game','admin','creation_time','kicked','time_kicked','team')
 
 
 class TagSerializer(serializers.ModelSerializer):

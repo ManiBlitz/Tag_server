@@ -205,10 +205,9 @@ def player_login(request, format=None):
                 request.session['user_logged'] = player.id
                 request.session['user_pseudo'] = player.pseudoname
                 request.session.set_expiry(7200)
-                return Response({
-                    'login_result': True,
-                    'player_id': player.id
-                }, status=status.HTTP_200_OK)
+                player.password = ""
+                serializer = PlayersSerializer(player, many=False)
+                return Response(serializer.data, status=status.HTTP_200_OK)
             login_note = "Wrong username or password"
             return Response({
                 'login_result': False,
