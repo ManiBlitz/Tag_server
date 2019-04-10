@@ -309,10 +309,10 @@ def add_to_lobby(request, format=None):
         player_id = request.POST['player_id']
         game_id = request.POST['game_id']
         game = Game.objects.get(pk = game_id)
-        invite = Invite.objects.filter(game=game).filter(receiver=player_id)
+        invite = Invite.objects.filter(game=game).get(receiver=player_id)
         if game.private:
 
-            if invite is not None and invite.receiver == player_id:
+            if invite is not None :
                 new_lobby_in = Lobby()
                 new_lobby_in.player = Players.objects.get(pk=player_id)
                 new_lobby_in.game = game
