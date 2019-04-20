@@ -30,3 +30,9 @@ class InviteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invite
         fields = ('id','sender','receiver','time_sent','opened','time_opened','game')
+
+
+class LocatePlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LocatePlayer
+        fields = ('id','game','longitude','latitude')

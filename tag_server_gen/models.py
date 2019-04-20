@@ -50,6 +50,16 @@ class Invite(models.Model):
     time_opened = models.DateTimeField(null=True)
 
 
+# This particular class enables to manage in-game localization for the different players
+
+class LocatePlayer(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    player = models.IntegerField()
+    longitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
+    latitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
+
+
+
 
 
 

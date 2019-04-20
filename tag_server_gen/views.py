@@ -367,6 +367,24 @@ def add_to_lobby(request, format=None):
             }, status=status.HTTP_400_BAD_REQUEST
         )
 
+@csrf_exempt
+@api_view(['POST'])
+def update_location_player(request, format=None):
+
+    if request.POST:
+
+        # We simply user update or create to match the presence and update accordingly
+
+        game_id = request.POST['game_id']
+        current_game = Game.objects.get(pk=game_id)
+        player_id = request.POST['player_id']
+        longitude = request.POST['longitude']
+        latitude = request.POST['latitude']
+        LocatePlayer.objects.update_or_create(game=current_game,player_id=player_id,longitude = longitude, latitude=latitude, defaults={
+            'longitude': longitude,
+            'latitude': latitude
+        })
+
 
 @csrf_exempt
 @api_view(['POST'])
