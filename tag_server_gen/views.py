@@ -309,7 +309,11 @@ def add_to_lobby(request, format=None):
         player_id = request.POST['player_id']
         game_id = request.POST['game_id']
         game = Game.objects.get(pk = game_id)
-        invite = Invite.objects.filter(game=game).get(receiver=player_id)
+        invite = None
+        try:
+            invite = Invite.objects.filter(game=game).get(receiver=player_id)
+        except Exception as e:
+            pprint.pprint(e)
         if game.private:
 
             if invite is not None :
