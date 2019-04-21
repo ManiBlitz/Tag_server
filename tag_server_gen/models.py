@@ -37,8 +37,9 @@ class Lobby(models.Model):
 
 class Tag(models.Model):
     sender_id = models.IntegerField()
-    receipt_id = models.IntegerField()
+    receiver_id = models.IntegerField()
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    tag_time = models.DateField(auto_now_add=True)
 
 
 class Invite(models.Model):
@@ -48,6 +49,16 @@ class Invite(models.Model):
     time_sent = models.DateTimeField(auto_now_add=True)
     opened = models.BooleanField(default=False)
     time_opened = models.DateTimeField(null=True)
+
+
+# This particular class enables to manage in-game localization for the different players
+
+class LocatePlayer(models.Model):
+    game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    player = models.IntegerField()
+    longitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
+    latitude = models.DecimalField(default=0.0, decimal_places=5, max_digits=10)
+
 
 
 
