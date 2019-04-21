@@ -15,6 +15,7 @@ urlpatterns = [
     path('invites', views.get_invites),                 #INSERTED
     path('games_list', views.get_games_list),           #INSERTED
     path('start_game', views.start_game),               #INSERTED
+    path('locate_fetch', views.locate_fetch),
 
 
     # Post functions URLs
@@ -27,7 +28,8 @@ urlpatterns = [
     path('join_lobby', views.add_to_lobby),             #INSERTED
     path('kick_player',views.kick_from_lobby),          #INSERTED
     path('player_ready', views.player_ready),           #INSERTED
-    path('locate_player', views.LocatePlayer)
+    path('locate_player', views.update_location_player),
+    path('tagged', views.player_tagged)
 
 
 ]

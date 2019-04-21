@@ -189,6 +189,21 @@ def start_game(request, format=None):
             },status.HTTP_400_BAD_REQUEST)
 
 
+@api_view(['GET'])
+def locate_fetch(request, format=None):
+
+    if request.GET:
+        try:
+            game_id = request.GET['game_id']
+            current_game = Game.objects.get(pk=game_id)
+            player_id = request.GET['player_id']
+            locate_player = LocatePlayer.objects.filter(game=current_game).get(player=player_id)
+            serializer = LocatePlayerSerializer(locate_player, many=False)
+            return Response(serializer.data)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
 # ---
 #  Active references
 # ---
@@ -374,16 +389,22 @@ def update_location_player(request, format=None):
     if request.POST:
 
         # We simply user update or create to match the presence and update accordingly
-
-        game_id = request.POST['game_id']
-        current_game = Game.objects.get(pk=game_id)
-        player_id = request.POST['player_id']
-        longitude = request.POST['longitude']
-        latitude = request.POST['latitude']
-        LocatePlayer.objects.update_or_create(game=current_game,player_id=player_id,longitude = longitude, latitude=latitude, defaults={
-            'longitude': longitude,
-            'latitude': latitude
-        })
+        try:
+            game_id = request.POST['game_id']
+            current_game = Game.objects.get(pk=game_id)
+            player_id = request.POST['player_id']
+            longitude = request.POST['longitude']
+            latitude = request.POST['latitude']
+            LocatePlayer.objects.update_or_create(game=current_game, player=player_id, defaults={
+                'longitude': longitude,
+                'latitude': latitude
+            })
+            return Response(status=status.HTTP_201_CREATED)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response({
+                'Error': True
+            }, status.HTTP_417_EXPECTATION_FAILED)
 
 
 @csrf_exempt
@@ -528,6 +549,30 @@ def player_ready(request, format=None):
             return Response({
                 'player_ready':False
             },status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@api_view(['POST'])
+def player_tagged(request, format=None):
+
+    if request.POST:
+        try:
+            tagged = request.POST["receiver_id"]
+            tagger = request.POST["sender_id"]
+            game = Game.objects.get(pk=request.POST["game_id"])
+            tag_time = timezone.now()
+            newTag = Tag()
+            newTag.game = game
+            newTag.sender_id = tagger
+            newTag.receiver_id = tagged
+            newTag.tag_time = tag_time
+            newTag.save()
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response({
+                'tagged': False
+            }, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 # ---

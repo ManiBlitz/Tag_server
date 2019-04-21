@@ -23,7 +23,7 @@ class LobbySerializer(serializers.ModelSerializer):
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = ('id','sender_id','receiver_id','game')
+        fields = ('id','sender_id','receiver_id','game','tag_time')
 
 
 class InviteSerializer(serializers.ModelSerializer):
@@ -35,4 +35,4 @@ class InviteSerializer(serializers.ModelSerializer):
 class LocatePlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = LocatePlayer
-        fields = ('id','game','longitude','latitude')
+        fields = ('id','game','player','longitude','latitude')

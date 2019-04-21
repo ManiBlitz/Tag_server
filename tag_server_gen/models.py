@@ -37,8 +37,9 @@ class Lobby(models.Model):
 
 class Tag(models.Model):
     sender_id = models.IntegerField()
-    receipt_id = models.IntegerField()
+    receiver_id = models.IntegerField()
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
+    tag_time = models.DateField(auto_now_add=True)
 
 
 class Invite(models.Model):
