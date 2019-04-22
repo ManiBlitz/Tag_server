@@ -197,7 +197,7 @@ def locate_fetch(request, format=None):
             game_id = request.GET['game_id']
             current_game = Game.objects.get(pk=game_id)
             player_id = request.GET['player_id']
-            locate_player = LocatePlayer.objects.filter(game=current_game).get(player=player_id)
+            locate_player = LocatePlayer.objects.get(game=current_game)
             serializer = LocatePlayerSerializer(locate_player, many=False)
             return Response(serializer.data)
         except Exception as e:
