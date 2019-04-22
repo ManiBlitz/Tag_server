@@ -26,7 +26,7 @@ class Game(models.Model):
 
 class Lobby(models.Model):
     game = models.ForeignKey(Game, on_delete=models.CASCADE)
-    player = models.ForeignKey(Players, on_delete=models.DO_NOTHING)
+    player = models.ForeignKey(Players, on_delete=models.CASCADE)
     in_game = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
     creation_time = models.DateTimeField(auto_now_add=True)
