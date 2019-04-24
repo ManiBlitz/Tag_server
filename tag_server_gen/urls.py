@@ -11,11 +11,11 @@ urlpatterns = [
     path('lobby_row_info', views.lobby_row_info),       #INSERTED
     path('game_info', views.game_info),                 #INSERTED
     path('invite_info', views.invite_info),             #INSERTED
-    path('tags', views.get_game_tags_player),           
+    path('tags', views.get_game_tags_player),           #INSERTED
     path('invites', views.get_invites),                 #INSERTED
     path('games_list', views.get_games_list),           #INSERTED
     path('start_game', views.start_game),               #INSERTED
-    path('locate_fetch', views.locate_fetch),
+    path('locate_fetch', views.locate_fetch),           #INSERTED
 
 
     # Post functions URLs
@@ -28,8 +28,9 @@ urlpatterns = [
     path('join_lobby', views.add_to_lobby),             #INSERTED
     path('kick_player',views.kick_from_lobby),          #INSERTED
     path('player_ready', views.player_ready),           #INSERTED
-    path('locate_player', views.update_location_player),
-    path('tagged', views.player_tagged)
+    path('locate_player', views.update_location_player),#INSERTED
+    path('tagged', views.player_tagged),                #INSERTED
+    path("quit_lobby", views.quit_lobby)                #INSERTED
 
 
 ]
