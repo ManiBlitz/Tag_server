@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '10.100.85.80'
     'tag-server-tiba.herokuapp.com'
+    'tag-server-tiba-2.herokuapp.com'
     
 ]
 
@@ -144,7 +145,7 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 # Configure Django App for Heroku.
 import django_heroku
+django_heroku.settings(locals())
 import dj_database_url
 prod_db  =  dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(prod_db)
-django_heroku.settings(locals())
