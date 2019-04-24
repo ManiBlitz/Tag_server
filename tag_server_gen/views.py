@@ -173,8 +173,9 @@ def start_game(request, format=None):
         try:
             game_id = request.GET['game_id']
             game_to_play = Game.objects.get(pk=game_id)
-            lobby = Lobby.objects.filter(game=game_to_play).filter(kicked=False).filter(in_game=True)
-            if len(lobby) >= 2:
+            lobby = Lobby.objects.filter(game=game_to_play).filter(kicked=False).filter(in_game=False)
+            pprint.pprint(lobby)
+            if len(lobby) >= 1:
                 game_to_play.game_status = 1002
                 game_to_play.save()
                 return Response(status=status.HTTP_200_OK)
@@ -381,6 +382,41 @@ def add_to_lobby(request, format=None):
                 "lobby_add": False,
             }, status=status.HTTP_400_BAD_REQUEST
         )
+
+# It will happen to have players leaving the lobby
+# This function is implemented to handle such case
+
+@csrf_exempt
+@api_view(['POST'])
+def quit_lobby(request, format=None):
+
+    if request.POST:
+
+        try:
+            player_id = request.POST['player_id']
+            game_id = request.POST['game_id']
+            player = Players.objects.get(pk=player_id)
+            game = Game.objects.get(pk=game_id)
+            lobby_row = Lobby.objects.filter(game=game).get(player=player)
+            lobby_row.delete()
+            return Response({
+                "lobby_row_delete": True
+            }, status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response(
+                {
+                    "lobby_row_delete": False,
+                }, status=status.HTTP_304_NOT_MODIFIED
+            )
+    else:
+        return Response(
+            {
+                "lobby_add": False,
+            }, status=status.HTTP_400_BAD_REQUEST
+        )
+
+
 
 @csrf_exempt
 @api_view(['POST'])
