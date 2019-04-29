@@ -28,9 +28,10 @@ DEBUG = True
 ALLOWED_HOSTS = [
     '10.0.0.39',
     'localhost',
-    '10.100.85.80'
-    'tag-server-tiba.herokuapp.com'
-    'tag-server-tiba-2.herokuapp.com'
+    '10.100.85.80',
+    'tag-server-tiba.herokuapp.com',
+    'tag-server-tiba-2.herokuapp.com',
+    '192.168.0.47',
     
 ]
 

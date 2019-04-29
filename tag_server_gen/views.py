@@ -217,7 +217,7 @@ def player_login(request, format=None):
     if request.POST:
         try:
             player = Players.objects.get(email=request.POST.get('email'))
-            if decrypt(password_encrypt, player.password) == request.POST.get('password'):
+            if decrypt(password_encrypt, player.password).decode('utf8') == request.POST.get('password'):
                 request.session['user_logged'] = player.id
                 request.session['user_pseudo'] = player.pseudoname
                 request.session.set_expiry(7200)
@@ -391,7 +391,6 @@ def add_to_lobby(request, format=None):
 def quit_lobby(request, format=None):
 
     if request.POST:
-
         try:
             player_id = request.POST['player_id']
             game_id = request.POST['game_id']
@@ -399,6 +398,11 @@ def quit_lobby(request, format=None):
             game = Game.objects.get(pk=game_id)
             lobby_row = Lobby.objects.filter(game=game).get(player=player)
             lobby_row.delete()
+            if len(Lobby.objects.filter(game=game)) == 0:
+                # we check if the game is empty. If yes, we delete the game
+                pprint.pprint("The game with ID "+str(game.pk)+" has been deleted due to lack of players")
+                game.delete()
+
             return Response({
                 "lobby_row_delete": True
             }, status=status.HTTP_202_ACCEPTED)
@@ -586,6 +590,7 @@ def player_ready(request, format=None):
                 'player_ready':False
             },status=status.HTTP_400_BAD_REQUEST)
 
+
 @csrf_exempt
 @api_view(['POST'])
 def player_tagged(request, format=None):
@@ -595,12 +600,10 @@ def player_tagged(request, format=None):
             tagged = request.POST["receiver_id"]
             tagger = request.POST["sender_id"]
             game = Game.objects.get(pk=request.POST["game_id"])
-            tag_time = timezone.now()
             newTag = Tag()
             newTag.game = game
             newTag.sender_id = tagger
             newTag.receiver_id = tagged
-            newTag.tag_time = tag_time
             newTag.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
@@ -608,7 +611,6 @@ def player_tagged(request, format=None):
             return Response({
                 'tagged': False
             }, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 # ---
