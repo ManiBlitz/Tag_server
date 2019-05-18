@@ -217,6 +217,7 @@ def player_login(request, format=None):
     if request.POST:
         try:
             player = Players.objects.get(email=request.POST.get('email'))
+            pprint.pprint(decrypt(password_encrypt, player.password))
             if decrypt(password_encrypt, player.password).decode('utf8') == request.POST.get('password'):
                 request.session['user_logged'] = player.id
                 request.session['user_pseudo'] = player.pseudoname
