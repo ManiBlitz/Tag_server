@@ -150,7 +150,8 @@ def get_games_list(request, format=None):
         try:
             latitude = request.GET['latitude']
             longitude = request.GET['longitude']
-            games = Game.objects.filter(latitude__range=(float(latitude)-0.1, float(latitude)+0.1)).filter(longitude__range=(float(longitude)-0.1, float(longitude)+0.1))
+            # This function detects games that are in the surroundings and that are still IN_LOBBY
+            games = Game.objects.filter(latitude__range=(float(latitude)-0.1, float(latitude)+0.1)).filter(longitude__range=(float(longitude)-0.1, float(longitude)+0.1)).filter(game_status = 1001)
             serializer = GameSerializer(games, many=True)
             return Response(serializer.data)
         except Exception as e:
@@ -188,6 +189,28 @@ def start_game(request, format=None):
             return Response({
                 'game_started':False
             },status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def end_game(request, format=None):
+
+    if request.GET:
+        try:
+            game_id = request.GET['game_id']
+            game_to_play = Game.objects.get(pk=game_id)
+            game_to_play.game_status = 1003
+            game_to_play.save()
+            return Response(status=status.HTTP_202_ACCEPTED)
+        except Exception as e:
+            pprint.pprint(e)
+            return Response({
+                'game_started': False
+            }, status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
 
 
 @api_view(['GET'])

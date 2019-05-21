@@ -16,6 +16,7 @@ urlpatterns = [
     path('games_list', views.get_games_list),           #INSERTED
     path('start_game', views.start_game),               #INSERTED
     path('locate_fetch', views.locate_fetch),           #INSERTED
+    path('end_game', views.end_game),                   #INSERTED
 
 
     # Post functions URLs
